@@ -141,13 +141,24 @@ mvn test
 
 ---
 ### GitHub Actions
-В репозитории присутствует workflow:
-- Сборка Maven
-- Запуск тестов
-- Кэширование зависимостей
+В проекте настроен CI/CD pipeline через GitHub Actions, обеспечивающий:
+- Кроссплатформенную сборку и тестирование на 4 операционных системах:
+    - Linux (`ubuntu-latest`)
+    - Windows (`windows-latest`)
+    - macOS Intel (`macos-15-intel`)
+    - macOS Apple Silicon (`macos-latest`)
+- Разделение на этапы:
+    - `build` - компиляция проекта
+    - `test` - запуск JUnit 5 тестов
+    - `deploy` - доставка исполняемого JAR-файла на виртуальную машину в Yandex Cloud через SSH
+- Автоматический запуск pipeline:
+    - при каждом пуше в ветку `main`
+    - при создании pull request в `main`
+
+После успешного прохождения всех тестов исполняемый JAR-файл копируется на удалённый сервер в директорию `~/shortlink/target/`
 
 #### Workflow-файл:
-`.github/workflows/build.yml`
+`.github/workflows/ci-cd.yml`
 
 ---
 ### Stack:
