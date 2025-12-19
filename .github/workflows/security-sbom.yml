@@ -1,0 +1,47 @@
+name: SBOM and Dependency Security Analysis
+
+on:
+    pull_request:
+        branches: [ "main" ]
+
+jobs:
+    security:
+        name: Generate SBOM & Scan Dependencies
+        runs-on: ubuntu-latest
+
+        steps:
+            -   name: Checkout repository
+                uses: actions/checkout@v4
+
+            -   name: Set up JDK 17
+                uses: actions/setup-java@v4
+                with:
+                    distribution: temurin
+                    java-version: 17
+                    cache: maven
+
+            -   name: Build project
+                run: mvn -B clean package
+
+            -   name: Generate SBOM (CycloneDX)
+                run: mvn -B cyclonedx:makeAggregateBom
+
+            -   name: Dependency Check
+                run: |
+                    mvn -B org.owasp:dependency-check-maven:check \
+                    -Dformat=ALL \
+                    -DfailBuildOnCVSS=0
+
+            -   name: Upload SBOM
+                uses: actions/upload-artifact@v4
+                with:
+                    name: sbom
+                    path: target/bom.xml
+                    retention-days: 7
+
+            -   name: Upload Dependency Check report
+                uses: actions/upload-artifact@v4
+                with:
+                    name: dependency-check-report
+                    path: target/dependency-check-report.*
+                    retention-days: 7

@@ -141,7 +141,8 @@ mvn test
 
 ---
 ### GitHub Actions
-В проекте настроен CI/CD pipeline через GitHub Actions, обеспечивающий:
+В проекте настроены два CI/CD pipeline через GitHub Actions:
+1. Сборка, тестирование и деплой (`.github/workflows/ci-cd.yml`), обеспечивающий:
 - Кроссплатформенную сборку и тестирование на 4 операционных системах:
     - Linux (`ubuntu-latest`)
     - Windows (`windows-latest`)
@@ -157,8 +158,14 @@ mvn test
 
 После успешного прохождения всех тестов исполняемый JAR-файл копируется на удалённый сервер в директорию `~/shortlink/target/`
 
-#### Workflow-файл:
-`.github/workflows/ci-cd.yml`
+2. Генерация SBOM и анализ уязвимостей (`.github/workflows/security-sbom.yml`):
+- Генерация SBOM в формате CycloneDX с помощью официального Maven-плагина (`cyclonedx-maven-plugin`)
+- Сканирование зависимостей через OWASP Dependency-Check
+- Запускается только при создании или обновлении pull request в ветку main
+- Артефакты:
+    - bom.json - SBOM-файл
+    - dependency-check-report.* - отчёты в HTML, JSON и XML
+- Срок хранения артефактов: 7 дней
 
 ---
 ### Stack:
