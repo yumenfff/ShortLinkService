@@ -174,7 +174,3 @@ mvn test
 - Jackson
 - JUnit 5
 - GitHub Actions
-
----
-### Лицензия
-Проект создан в учебных целях
